@@ -15,7 +15,6 @@ namespace AdventOfCode2022.Days.Day01
 
         [TestCase(Input.Example, 24000)]
         [TestCase(Input.File, 66616)]
-
         public override long Part1(List<List<long>> input)
         {
             return input.Select(group=> group.Sum()).Max();
