@@ -39,13 +39,20 @@ namespace AdventOfCode2022.Utils
 
             foreach (var testCase in part1TestCases)
             {
-                // TestCase = testCase;
-                Part1(testCase.Input == Input.Example ? example[0] : file[0]).Should().Be(testCase.Expected);
+                var actual = Part1(testCase.Input == Input.Example ? example[0] : file[0]);
+                if (actual != testCase.Expected)
+                {
+                    Console.WriteLine($"\nERROR! {this.GetType().Name}/Part 1/{testCase.Input} expected {testCase.Expected}, got {actual}");
+                }
             }
+
             foreach (var testCase in part2TestCases)
             {
-                // TestCase = testCase;
-                Part2(testCase.Input == Input.Example ? example[0] : file[0]).Should().Be(testCase.Expected);
+                var actual = Part2(testCase.Input == Input.Example ? example[0] : file[0]);
+                if (actual != testCase.Expected)
+                {
+                    Console.WriteLine($"\nERROR! {this.GetType().Name}/Part 2/{testCase.Input} expected {testCase.Expected}, got {actual}");
+                }
             }
         }
 
