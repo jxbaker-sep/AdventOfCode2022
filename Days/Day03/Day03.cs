@@ -16,8 +16,10 @@ public class Day03 : AdventOfCode<List<string>>
     public override long Part1(List<string> input)
     {
         return input
-            .Select(line => Priority(line.Substring(0, line.Length / 2)
-                .Intersect(line.Substring(line.Length / 2)).Single()
+            .Select(line => Priority(
+                line.Substring(0, line.Length / 2)
+                    .Intersect(line.Substring(line.Length / 2))
+                    .Single()
             ))
             .Sum();
     }
@@ -27,7 +29,11 @@ public class Day03 : AdventOfCode<List<string>>
     public override long Part2(List<string> input)
     {
         return input.InGroupsOf(3)
-            .Select(group => Priority(group[0].Intersect(group[1]).Intersect(group[2]).Single()))
+            .Select(group => Priority(
+                group[0].Intersect(group[1])
+                    .Intersect(group[2])
+                    .Single()
+            ))
             .Sum();
     }
 
@@ -36,5 +42,4 @@ public class Day03 : AdventOfCode<List<string>>
         if (v is >= 'a' and <= 'z') return v - 'a' + 1;
         return v - 'A' + 27;
     }
-
 }
