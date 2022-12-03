@@ -7,6 +7,21 @@ namespace AdventOfCode2022.Utils
 
     public static class EnumerableExtensions
     {
+        public static IEnumerable<List<T>> InGroupsOf<T>(this IEnumerable<T> self, int n)
+        {
+            var l = new List<T>();
+            foreach(var item in self)
+            {
+                l.Add(item);
+                if (l.Count == n)
+                {
+                    yield return l;
+                    l = new List<T>();
+                }
+            }
+            if (l.Any()) throw new Exception();
+        }
+
         public static long Pin(this long self, int min, int max)
         {
             if (self < min) return min;
