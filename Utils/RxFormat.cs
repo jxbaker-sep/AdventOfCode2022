@@ -2,7 +2,7 @@
 
 namespace AdventOfCode2022.Utils
 {
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
     public class RxFormat : Attribute
     {
         public string? After { get; set; }
