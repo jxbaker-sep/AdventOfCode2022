@@ -219,6 +219,13 @@ namespace AdventOfCode2022.Utils
             return result;
         }
 
+        public static List<T> PopRange<T>(this List<T> self, int count)
+        {
+            var result = self.Skip(self.Count - count).ToList();
+            self.RemoveRange(self.Count - count, count);
+            return result;
+        }
+
         public static T Shift<T>(this LinkedList<T> self)
         {
             if (self.Any())

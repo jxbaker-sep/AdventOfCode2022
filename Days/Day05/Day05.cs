@@ -50,11 +50,9 @@ public class Day05 : AdventOfCode<string, Day05Input>
         var stacks = input.Stacks.Select(it => it.ToList()).ToList();
         foreach(var instruction in input.Instructions)
         {
-            foreach (var _ in Enumerable.Range(0, instruction.Count))
-            {
-                var item = stacks[instruction.From-1].Pop();
-                stacks[instruction.To-1].Add(item);
-            }
+            var l = stacks[instruction.From-1].PopRange(instruction.Count);
+            l.Reverse();
+            stacks[instruction.To-1].AddRange(l);
         }
 
         return stacks.Select(it => it.Last()).Join("");
@@ -67,9 +65,8 @@ public class Day05 : AdventOfCode<string, Day05Input>
         var stacks = input.Stacks.Select(it => it.ToList()).ToList();
         foreach(var instruction in input.Instructions)
         {
-            var items = stacks[instruction.From-1].Skip(stacks[instruction.From-1].Count - instruction.Count).ToList();
-            stacks[instruction.From-1] = stacks[instruction.From-1].Take(stacks[instruction.From-1].Count - instruction.Count).ToList();
-            stacks[instruction.To-1].AddRange(items);
+            var l = stacks[instruction.From-1].PopRange(instruction.Count);
+            stacks[instruction.To-1].AddRange(l);
         }
 
         return stacks.Select(it => it.Last()).Join("");
