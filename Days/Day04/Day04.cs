@@ -10,7 +10,7 @@ namespace AdventOfCode2022.Days.Day04;
 [UsedImplicitly]
 public class Day04 : AdventOfCode<long, List<ElfPair>>
 {
-    public override List<ElfPair> Parse(string input) => TypeCompiler.ParseLines<ElfPair>(input);
+    public override List<ElfPair> Parse(string input) => input.Lines().Parse<ElfPair>();
 
     [TestCase(Input.Example, 2)]
     [TestCase(Input.File, 433)]

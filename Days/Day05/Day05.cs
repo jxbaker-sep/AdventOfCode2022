@@ -10,37 +10,25 @@ namespace AdventOfCode2022.Days.Day05;
 [UsedImplicitly]
 public class Day05 : AdventOfCode<string, Day05Input>
 {
-    private enum ParseState {Stacks, Instructions};
     public override Day05Input Parse(string input)
     {
         var lines = input.Split(Environment.NewLine);
-        var state = ParseState.Stacks;
+        var (stackLines, iLines) = lines.SplitInTwo(line => line.Trim() == "");
         var stacks = Enumerable.Range(0, (lines.First() + " ").Count() / 4).Select(_ => new List<char>()).ToList();
-        var instructions = new List<Day05Instruction>();
 
-
-        foreach(var line in lines)
+        foreach(var line in stackLines)
         {
-            if (state == ParseState.Stacks)
+            if (line.StartsWith(" 1"))
             {
-                if (line.StartsWith(" 1"))
-                {
-                    state = ParseState.Instructions;
-                    continue;
-                }
-                foreach(var (group, index) in (line + " ").InGroupsOf(4).WithIndices())
-                {
-                    if (group[1] != ' ') stacks[index].Insert(0, group[1]);
-                }
+                continue;
             }
-            else
+            foreach(var (group, index) in (line + " ").InGroupsOf(4).WithIndices())
             {
-                if (line.Trim() == "") continue;
-                instructions.Add(TypeCompiler.Parse<Day05Instruction>(line));
+                if (group[1] != ' ') stacks[index].Insert(0, group[1]);
             }
         }
 
-        return new(stacks, instructions);
+        return new(stacks, iLines.Parse<Day05Instruction>());
     }
 
     [TestCase(Input.Example, "CMZ")]

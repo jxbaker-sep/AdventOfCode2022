@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TypeParser;
 
 namespace AdventOfCode2022.Utils
 {
@@ -236,5 +237,33 @@ namespace AdventOfCode2022.Utils
             }
             throw new ApplicationException("Attempt to shift empty list.");
         }
+
+        public static (List<T>, List<T>) SplitInTwo<T>(this IEnumerable<T> self, Func<T, bool> test)
+        {
+            var l1 = new List<T>();
+            var l2 = new List<T>();
+            var split = false;
+            foreach(var item in self)
+            {
+                if (!split)
+                {
+                    if (test(item))
+                    {
+                        split = true;
+                        continue;
+                    }
+                    l1.Add(item);
+                }
+                else 
+                {
+                    l2.Add(item);
+                }
+            }
+            return (l1, l2);
+        }
+
+        public static T Parse<T>(this string self) => TypeCompiler.Parse<T>(self);
+
+        public static List<T> Parse<T>(this IEnumerable<string> self) => self.Select(s => s.Parse<T>()).ToList();
     }
 }
