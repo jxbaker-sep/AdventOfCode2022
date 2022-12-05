@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using AdventOfCode2022.Days.Day01;
 using AdventOfCode2022.Utils;
+using TypeParser;
 
 namespace AdventOfCode2022
 {
@@ -17,7 +18,7 @@ namespace AdventOfCode2022
                 .Where(type => !type.IsAbstract)
                 .Where(type => type.IsClass)
                 .Where(type => type.IsAssignableTo(typeof(IAdventOfCode)))
-                .Select(type => (type, StructuredRx.ParseOrDefault<DayClass>(type.Name)))
+                .Select(type => (type, TypeCompiler.ParseOrDefault<DayClass>(type.Name)))
                 .Where(it => it.Item2 != null)
                 .OrderBy(it => it.Item2!.DayNumber)
                 .ToList();
@@ -27,7 +28,6 @@ namespace AdventOfCode2022
                 days = EnumerableExtensions.ListFromItem(days.Last());
             }
 
-            new Day01().Run(); // This (somehow) "warms up" the system so the time output does not include the warmup time
             foreach (var day in days)
             {
                 Console.Write(day.type.Name);
@@ -42,7 +42,7 @@ namespace AdventOfCode2022
 
     public class DayClass
     {
-        [RxFormat(Before = "Day")]
+        [Format(Before = "Day")]
         public int DayNumber { get; set; }
     }
 }

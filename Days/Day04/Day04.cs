@@ -3,24 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using AdventOfCode2022.Utils;
 using JetBrains.Annotations;
+using TypeParser;
 
 namespace AdventOfCode2022.Days.Day04;
 
 [UsedImplicitly]
-public class Day04 : AdventOfCode<List<ElfPair>>
+public class Day04 : AdventOfCode<long, List<ElfPair>>
 {
-    public override List<ElfPair> Parse(string input) => input
-        .Lines()
-        .Select(line => {
-            var temp = line.Split(",");
-            var t1 = temp[0].Split("-");
-            var t2 = temp[1].Split("-");
-            return new ElfPair(
-                new(Convert.ToInt64(t1[0]), Convert.ToInt64(t1[1])),
-                new(Convert.ToInt64(t2[0]), Convert.ToInt64(t2[1]))
-            );
-        })
-        .ToList();
+    public override List<ElfPair> Parse(string input) => TypeCompiler.ParseLines<ElfPair>(input);
 
     [TestCase(Input.Example, 2)]
     [TestCase(Input.File, 433)]
@@ -52,5 +42,5 @@ public class Day04 : AdventOfCode<List<ElfPair>>
     }
 }
 
-public record SectionAssignment(long First, long Last);
-public record ElfPair(SectionAssignment Elf1, SectionAssignment Elf2);
+public record SectionAssignment(long First, [Format(Before="-")]long Last);
+public record ElfPair(SectionAssignment Elf1, [Format(Before = ",")]SectionAssignment Elf2);

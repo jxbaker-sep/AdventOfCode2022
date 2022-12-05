@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 namespace AdventOfCode2022.Days.Day02;
 
 [UsedImplicitly]
-public class Day02 : AdventOfCode<List<Day02Input>>
+public class Day02 : AdventOfCode<long, List<Day02Input>>
 {
     public override List<Day02Input> Parse(string input) => input
         .Lines()

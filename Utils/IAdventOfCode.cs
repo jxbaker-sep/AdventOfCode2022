@@ -17,12 +17,12 @@ namespace AdventOfCode2022.Utils
         public static string Example(this IAdventOfCode self) => System.IO.File.ReadAllText($"Days/{self.GetType().Name}/Example.txt");
     }
 
-    public abstract class AdventOfCode<T> : IAdventOfCode
+    public abstract class AdventOfCode<TOut, TIn> : IAdventOfCode
     {
         public void Run()
         {
-            var example = new List<T>();
-            var file = new List<T>();
+            var example = new List<TIn>();
+            var file = new List<TIn>();
 
             var part1TestCases = GetType().GetMethod("Part1")!.GetCustomAttributes<TestCaseAttribute>().ToList();
             var part2TestCases = GetType().GetMethod("Part2")!.GetCustomAttributes<TestCaseAttribute>().ToList();
@@ -40,7 +40,7 @@ namespace AdventOfCode2022.Utils
             foreach (var testCase in part1TestCases)
             {
                 var actual = Part1(testCase.Input == Input.Example ? example[0] : file[0]);
-                if (actual != testCase.Expected)
+                if (!actual!.Equals(Coerce(actual, testCase.Expected)))
                 {
                     Console.WriteLine($"\nERROR! {this.GetType().Name}/Part 1/{testCase.Input} expected {testCase.Expected}, got {actual}");
                 }
@@ -49,26 +49,36 @@ namespace AdventOfCode2022.Utils
             foreach (var testCase in part2TestCases)
             {
                 var actual = Part2(testCase.Input == Input.Example ? example[0] : file[0]);
-                if (actual != testCase.Expected)
+                if (!actual!.Equals(Coerce(actual, testCase.Expected)))
                 {
                     Console.WriteLine($"\nERROR! {this.GetType().Name}/Part 2/{testCase.Input} expected {testCase.Expected}, got {actual}");
                 }
             }
         }
 
-        public abstract T Parse(string input);
+        object? Coerce(object? n, object n2)
+        {
+            if (n == null) return n;
+            if (n2.GetType() == typeof(int) && n.GetType() == typeof(long))
+            {
+                return (long)n;
+            }
+            return n;
+        }
 
-        public abstract long Part1(T input);
-        public abstract long Part2(T input);
+        public abstract TIn Parse(string input);
+
+        public abstract TOut Part1(TIn input);
+        public abstract TOut Part2(TIn input);
     }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class TestCaseAttribute: Attribute
     {
         public Input Input { get; }
-        public long Expected { get; }
+        public object Expected { get; }
 
-        public TestCaseAttribute(Input input, long expected)
+        public TestCaseAttribute(Input input, object expected)
         {
             Input = input;
             Expected = expected;
