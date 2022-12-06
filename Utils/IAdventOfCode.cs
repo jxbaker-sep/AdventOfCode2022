@@ -39,8 +39,13 @@ namespace AdventOfCode2022.Utils
 
             foreach (var testCase in part1TestCases)
             {
-                var actual = Part1(testCase.Input == Input.Example ? example[0] : file[0]);
-                if (!actual!.Equals(Coerce(actual, testCase.Expected)))
+                var actual = Part1(testCase.Input switch{
+                    Input.Example => example[0],
+                    Input.File => file[0],
+                    Input.Raw => Parse(testCase.Raw),
+                    _ => throw new ApplicationException()
+                });
+                if (!actual!.Equals(Coerce2nd(actual, testCase.Expected)))
                 {
                     Console.WriteLine($"\nERROR! {this.GetType().Name}/Part 1/{testCase.Input} expected {testCase.Expected}, got {actual}");
                 }
@@ -48,22 +53,27 @@ namespace AdventOfCode2022.Utils
 
             foreach (var testCase in part2TestCases)
             {
-                var actual = Part2(testCase.Input == Input.Example ? example[0] : file[0]);
-                if (!actual!.Equals(Coerce(actual, testCase.Expected)))
+                var actual = Part2(testCase.Input switch{
+                    Input.Example => example[0],
+                    Input.File => file[0],
+                    Input.Raw => Parse(testCase.Raw),
+                    _ => throw new ApplicationException()
+                });
+                if (!actual!.Equals(Coerce2nd(actual, testCase.Expected)))
                 {
                     Console.WriteLine($"\nERROR! {this.GetType().Name}/Part 2/{testCase.Input} expected {testCase.Expected}, got {actual}");
                 }
             }
         }
 
-        object? Coerce(object? n, object n2)
+        object? Coerce2nd(object n, object n2)
         {
-            if (n == null) return n;
+            if (n2 == null) return n2;
             if (n2.GetType() == typeof(int) && n.GetType() == typeof(long))
             {
-                return (long)n;
+                return Convert.ToInt64(n2);
             }
-            return n;
+            return n2;
         }
 
         public abstract TIn Parse(string input);
@@ -77,6 +87,7 @@ namespace AdventOfCode2022.Utils
     {
         public Input Input { get; }
         public object Expected { get; }
+        public string Raw {get; set;} = "";
 
         public TestCaseAttribute(Input input, object expected)
         {
@@ -88,6 +99,7 @@ namespace AdventOfCode2022.Utils
     public enum Input
     {
         Example,
-        File
+        File,
+        Raw
     }
 }
