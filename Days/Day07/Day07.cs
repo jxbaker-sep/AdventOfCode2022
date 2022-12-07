@@ -18,8 +18,6 @@ public class Day07 : AdventOfCode<long, List<Day05Line>>
     public override long Part1(List<Day05Line> input)
     {
         var root = CreateDirTree(input);
-        var sizes = new List<long>();
-        ReduceToSizes(root, sizes);
         var sentinel = 100_000L;
 
         return Walk(root).Select(d => TotalSize(d)).Where(ts => ts <= sentinel).Sum();
@@ -64,11 +62,6 @@ public class Day07 : AdventOfCode<long, List<Day05Line>>
         }
 
         return root;
-    }
-
-    private long ReduceToSizes(Directory d, List<long> sizes)
-    {
-        var subdirs = d.Directories.Select(d2 => ReduceToSizes(d2, sizes)).ToList();
     }
 
     private long TotalSize(Directory d)
