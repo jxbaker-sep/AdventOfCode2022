@@ -17,10 +17,11 @@ public class Day07 : AdventOfCode<long, List<Day05Line>>
     [TestCase(Input.File, 1642503)]
     public override long Part1(List<Day05Line> input)
     {
-        var root = CreateDirTree(input);
-        var sentinel = 100_000L;
+        // var root = CreateDirTree(input);
+        // var sentinel = 100_000L;
 
-        return Walk(root).Select(d => TotalSize(d)).Where(ts => ts <= sentinel).Sum();
+        // return Walk(root).Select(d => TotalSize(d)).Where(ts => ts <= sentinel).Sum();
+        return 0;
     }
 
     [TestCase(Input.Example, 24933642)]
