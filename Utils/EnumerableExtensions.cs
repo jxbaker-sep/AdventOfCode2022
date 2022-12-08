@@ -265,5 +265,16 @@ namespace AdventOfCode2022.Utils
         public static T Parse<T>(this string self) => TypeCompiler.Parse<T>(self);
 
         public static List<T> Parse<T>(this IEnumerable<string> self) => self.Select(s => s.Parse<T>()).ToList();
+    
+        // like TakeWhile but also returns first non-match
+        public static IEnumerable<T> TakeWhilePlusOne<T>(this IEnumerable<T> self, Func<T, bool> predicate)
+        {
+            foreach(var item in self)
+            {
+                var p = predicate(item);
+                yield return item;
+                if (!p) break;
+            }
+        }
     }
 }
