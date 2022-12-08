@@ -24,14 +24,14 @@ public class Day08 : AdventOfCode<long, List<List<long>>>
         {
             foreach(var (col, colindex) in row.WithIndices())
             {
-                if (Enumerable.Range(0, rowindex)
-                    .All(n => input[n][colindex] < col)) {count += 1; continue;}
-                if (Enumerable.Range(rowindex + 1, input.Count - rowindex - 1)
-                    .All(s => input[s][colindex] < col)) {count += 1; continue;}
-                if (Enumerable.Range(0, colindex)
-                    .All(w => input[rowindex][w] < col)) {count += 1; continue;}
-                if (Enumerable.Range(colindex + 1, input[0].Count - colindex - 1)
-                    .All(e => input[rowindex][e] < col)) {count += 1; continue;}
+                if (input.Take(rowindex).Select(row => row[colindex])
+                    .All(n => n < col)) {count += 1; continue;}
+                if (input.Skip(rowindex+1).Select(row => row[colindex])
+                    .All(s => s < col)) {count += 1; continue;}
+                if (input[rowindex].Take(colindex)
+                    .All(w => w < col)) {count += 1; continue;}
+                if (input[rowindex].Skip(colindex+1)
+                    .All(e => e < col)) {count += 1; continue;}
             }
         }
 
@@ -47,22 +47,18 @@ public class Day08 : AdventOfCode<long, List<List<long>>>
         {
             foreach(var (col, colindex) in row.WithIndices())
             {
-                var n = Enumerable.Range(0, rowindex)
-                    .Select(n => input[n][colindex])
+                var n = input.Take(rowindex).Select(row => row[colindex])
                     .Reverse()
                     .TakeWhilePlusOne(n => n < col)
                     .Count();
-                var s = Enumerable.Range(rowindex + 1, input.Count - rowindex - 1)
-                    .Select(s => input[s][colindex])
+                var s = input.Skip(rowindex+1).Select(row => row[colindex])
                     .TakeWhilePlusOne(s => s < col)
                     .Count();
-                var w = Enumerable.Range(0, colindex)
-                    .Select(w => input[rowindex][w])
+                var w = input[rowindex].Take(colindex)
                     .Reverse()
                     .TakeWhilePlusOne(w => w < col)
                     .Count();
-                var e = Enumerable.Range(colindex + 1, input[0].Count - colindex - 1)
-                    .Select(e => input[rowindex][e])
+                var e = input[rowindex].Skip(colindex+1)
                     .TakeWhilePlusOne(e => e < col)
                     .Count();
                 if (max < n*s*e*w) max = n*e*s*w;
