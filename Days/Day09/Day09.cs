@@ -58,16 +58,8 @@ public class Day09 : AdventOfCode<long, IReadOnlyList<Vector>>
         foreach (var tail in rope.Skip(1))
         {
             var head = result.Last();
-            
-            if (!head.OrthoganallyOrDiagonallyAdjacent(tail))
-            {
-                var delta = (head - tail).Unit;
-                result.Add(tail + delta);
-            }
-            else
-            {
-                result.Add(tail);
-            }
+
+            result.Add(tail + (head.OrthoganallyOrDiagonallyAdjacent(tail) ? Vector.Zero : (head - tail).Unit));
         }
         return result;
     }
