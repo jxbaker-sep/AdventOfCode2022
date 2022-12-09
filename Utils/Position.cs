@@ -72,5 +72,23 @@ namespace AdventOfCode2022.Utils
         {
             return $"({Y},{X})";
         }
+
+        public bool OrthoganallyAdjacent(Position other)
+        {
+            return ManhattanDistance(other) <= 1;
+        }
+
+        public bool OrthoganallyOrDiagonallyAdjacent(Position other)
+        {
+            var delta = this - other;
+            return Math.Abs(delta.X) < 2 && Math.Abs(delta.Y) < 2;
+        }
+
+        public bool DiagonallyAdjacent(Position other)
+        {
+            return OrthoganallyOrDiagonallyAdjacent(other) && !OrthoganallyAdjacent(other);
+        }
+
+        public Vector Unit => new Vector(Math.Sign(Y), Math.Sign(X));
     }
 }

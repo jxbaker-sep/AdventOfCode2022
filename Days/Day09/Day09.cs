@@ -8,14 +8,23 @@ using TypeParser;
 namespace AdventOfCode2022.Days.Day09;
 
 [UsedImplicitly]
-public class Day09 : AdventOfCode<long, List<Day09Input>>
+public class Day09 : AdventOfCode<long, IReadOnlyList<Vector>>
 {
-    public override List<Day09Input> Parse(string input) => input.Lines().Parse<Day09Input>();
+    public override IReadOnlyList<Vector> Parse(string input) => input.Lines().Select(line => 
+        line[0] switch
+        {
+            'D' => Vector.South,
+            'U' => Vector.North,
+            'L' => Vector.West,
+            'R' => Vector.East,
+            _ => throw new ApplicationException()
+        } * Convert.ToInt32(line.Substring(2))
+    ).ToList();
 
 
     [TestCase(Input.Example, 13)]
     [TestCase(Input.File, 5878)]
-    public override long Part1(List<Day09Input> input)
+    public override long Part1(IReadOnlyList<Vector> input)
     {
         return Snake(2, input);
     }
@@ -23,49 +32,42 @@ public class Day09 : AdventOfCode<long, List<Day09Input>>
     [TestCase(Input.Example, 1)]
     [TestCase(Input.Raw, 36, Raw = Example2)]
     [TestCase(Input.File, 2405)]
-    public override long Part2(List<Day09Input> input)
+    public override long Part2(IReadOnlyList<Vector> input)
     {
         return Snake(10, input);
     }
 
-    private long Snake(int snakeLength, List<Day09Input> input)
+    private long Snake(int snakeLength, IReadOnlyList<Vector> input)
     {
         var rope = Enumerable.Range(0, snakeLength).Select(_ => new Position(0,0)).ToList();
         var visited = new HashSet<Position>{rope.Last()};
-        var dmap = new Dictionary<Direction, Vector>
+        foreach(var vector in input)
         {
-            { Direction.D, Vector.South },
-            { Direction.L, Vector.West },
-            { Direction.R, Vector.East },
-            { Direction.U, Vector.North }
-        };
-        foreach(var item in input)
-        {
-            foreach(var _ in Enumerable.Range(0, item.Magnitude))
+            foreach(var _ in Enumerable.Range(0, vector.Magnitude))
             {
-                rope = MoveRope(rope, dmap[item.Direction]);
+                rope = MoveRope(rope, vector.Unit);
                 visited.Add(rope.Last());
             }
         }
         return visited.Count;
     }
 
-    List<Position> MoveRope(List<Position> rope, Vector start)
+    List<Position> MoveRope(IReadOnlyList<Position> rope, Vector v)
     {
-        var result = new List<Position>{rope[0] + start};
-        for (var current = 1; current < rope.Count; current++)
+        var result = new List<Position>{rope[0] + v};
+        foreach (var tail in rope.Skip(1))
         {
             var head = result.Last();
-            var tail = rope[current];
-            var delta = head - tail;
-            if (Math.Abs(delta.X) == 2 || Math.Abs(delta.Y) == 2)
+            
+            if (!head.OrthoganallyOrDiagonallyAdjacent(tail))
             {
-                if (delta.X > 0) tail += Vector.East;
-                else if (delta.X < 0) tail += Vector.West;
-                if (delta.Y > 0) tail += Vector.South;
-                else if (delta.Y < 0) tail += Vector.North;
+                var delta = (head - tail).Unit;
+                result.Add(tail + delta);
             }
-            result.Add(tail);
+            else
+            {
+                result.Add(tail);
+            }
         }
         return result;
     }
@@ -79,6 +81,3 @@ D 10
 L 25
 U 20";
 }
-
-public enum Direction {U, D, R, L};
-public record Day09Input(Direction Direction, int Magnitude);

@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode2022.Utils
+﻿using System;
+
+namespace AdventOfCode2022.Utils
 {
     public class Vector
     {
@@ -28,5 +30,9 @@
 
         public Vector RotateRight() => new(dX, -dY);
         public Vector RotateLeft() => new(-dX, dY);
+
+        public int Magnitude => Math.Abs(dX) + Math.Abs(dY);
+
+        public Vector Unit => new Vector(Math.Sign(dY), Math.Sign(dX));
     }
 }
