@@ -34,18 +34,26 @@ namespace TypeParser
     [UsedImplicitly]
     public static class TypeCompiler
     {
+        private static Dictionary<Type, object> Memoise = new();
+
         [UsedImplicitly]
         public static ITypeParser<T> Compile<T>(Format? format = null)
         {
+            if (Memoise.TryGetValue(typeof(T), out var found))
+            {
+                return (ITypeParser<T>)found;
+            }
             var compiler = new InternalTypeCompiler();
-            return new TypeParserFacade<T>(new EntireStringMatcher(compiler.Compile(typeof(T), format?.Format())));
+            var created = new TypeParserFacade<T>(new EntireStringMatcher(compiler.Compile(typeof(T), format?.Format())));
+            Memoise[typeof(T)] = created;
+            return created;
         }
 
-        public static ITypeParser<T> GetTypeParser<T>(Format? format = null)
-        {
-            var compiler = new InternalTypeCompiler();
-            return new TypeParserFacade<T>(compiler.Compile(typeof(T), format?.Format()));
-        }
+        // public static ITypeParser<T> GetTypeParser<T>(Format? format = null)
+        // {
+        //     var compiler = new InternalTypeCompiler();
+        //     return new TypeParserFacade<T>(compiler.Compile(typeof(T), format?.Format()));
+        // }
 
         public static T Parse<T>(string input, Format? format = null)
         {
