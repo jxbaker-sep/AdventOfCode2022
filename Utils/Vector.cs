@@ -4,6 +4,7 @@ namespace AdventOfCode2022.Utils
 {
     public class Vector
     {
+        public static readonly Vector Zero = new(0, 0);
         public static readonly Vector North = new(-1, 0);
         public static readonly Vector East = new(0, 1);
         public static readonly Vector South = new(1, 0);
