@@ -59,8 +59,21 @@ namespace TypeParser.Matchers
             if (Matchers == null)
             {
                 Matchers = Properties.Select(it =>
-                    Compiler.Compile(it.Type,
-                        it.Attributes.OfType<Format>().FirstOrDefault()?.Format())).ToList();
+                {
+                    var format = it.Attributes.OfType<Format>().FirstOrDefault()?.Format();
+                    var alternate = it.Attributes.OfType<Alternate>().FirstOrDefault();
+                    if (alternate != null)
+                    {
+                        if (format != null)
+                        {
+                            format = format with {Optional = Optional.Required};
+                        }
+                        else{
+                            format = new(null, null, Optional.Required, null, int.MinValue, int.MaxValue, null);
+                        }
+                    }
+                    return Compiler.Compile(it.Type, format);
+                }).ToList();
             }
 
             return Matchers;

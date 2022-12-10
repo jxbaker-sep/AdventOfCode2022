@@ -24,12 +24,19 @@ namespace TypeParser
                 type.GenericTypeArguments.FirstOrDefault() is { } targ &&
                 type.IsAssignableTo(typeof(Nullable<>).MakeGenericType(targ)))
             {
-                return new OptionalMatcher(Compile(targ, format with {Optional = false}));
+                if (format.Optional is Optional.Required)
+                {
+                    return Compile(targ, format with {Optional = Optional.Required});
+                }
+                else
+                {
+                    return new OptionalMatcher(Compile(targ, format with {Optional = Optional.Required}));
+                }
             }
 
-            if (format is {Optional: true})
+            if (format is {Optional: Optional.Optional})
             {
-                return new OptionalMatcher(Compile(type, format with {Optional = false}));
+                return new OptionalMatcher(Compile(type, format with {Optional = Optional.Required}));
             }
 
             if (format.Before is not null)
