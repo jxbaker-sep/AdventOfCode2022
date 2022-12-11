@@ -27,7 +27,7 @@ public class Day10 : AdventOfCode<long, IReadOnlyList<Day10Input>>
     public override long Part2(IReadOnlyList<Day10Input> input)
     {
         var states = ProduceStates(input);
-        var crt = Enumerable.Repeat(0, 40 * 6).ToList();
+        var crt = Enumerable.Repeat(false, 40 * 6).ToList();
 
         foreach(var cycle in Enumerable.Range(0, 240))
         {
@@ -35,12 +35,12 @@ public class Day10 : AdventOfCode<long, IReadOnlyList<Day10Input>>
             var middleOfSprite = states[cycle];
             if (cursorPosition >= middleOfSprite - 1 && cursorPosition <= middleOfSprite + 1)
             {
-                crt[cycle] = 1;
+                crt[cycle] = true;
             }
         }
         Console.WriteLine();
         crt.InGroupsOf(40)
-            .Select(x => x.Select(y => y == 0 ? " " : "#").Join(""))
+            .Select(x => x.Select(y => y ? "#" : ".").Join(""))
             .ToList()
             .ForEach(line => Console.WriteLine(line));
 
