@@ -28,17 +28,18 @@ public class Day12 : AdventOfCode<long, Day12Input>
     [TestCase(Input.File, 481)]
     public override long Part1(Day12Input input)
     {
-        return FindRoute(input.Grid, input.Start, input.End);
+        return FindRoute(input.Grid, input.Start, input.End) ?? throw new ApplicationException();
     }
 
-    [TestCase(Input.Example, 0)]
-    [TestCase(Input.File, 0)]
+    [TestCase(Input.Example, 29)]
+    [TestCase(Input.File, 480)]
     public override long Part2(Day12Input input)
     {
-        return 0;
+        var startPositions = input.Grid.SelectMany((line, row) => line.Select((c, col) => (row, col, c))).Where(it => it.c == 0).ToList();
+        return startPositions.Select(position => FindRoute(input.Grid, new(position.row, position.col), input.End)).OfType<long>().Min();
     }
 
-    private long FindRoute(List<List<int>> grid, Position start, Position end)
+    private long? FindRoute(List<List<int>> grid, Position start, Position end)
     {
         var closed = new Dictionary<Position, long>
         {
@@ -55,10 +56,10 @@ public class Day12 : AdventOfCode<long, Day12Input>
             {
                 open.Enqueue(item);
                 closed[item] = closed[current] + 1;
-                if (item == end) found = true;
+                if (item == end) return closed[item];
             }
         }
-        return closed[end];
+        return null;
     }
 }
 
