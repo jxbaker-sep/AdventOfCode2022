@@ -47,16 +47,15 @@ public class Day12 : AdventOfCode<long, Day12Input>
         };
         var open = new Queue<Position>();
         open.Enqueue(start);
-        var found = false;
-        while (!found && open.TryDequeue(out var current))
+        while (open.TryDequeue(out var current))
         {
-            foreach(var item in current.Orthogonals()
+            foreach(var next in current.Orthogonals()
                 .Where(next => !closed.ContainsKey(next))
-                .Where(next => next.TryGetValueAtPosition(grid, out var value) &&  value <= current.GetValue(grid) + 1))
+                .Where(next => next.TryLookup(grid, out var nextElevation) && nextElevation <= current.Lookup(grid) + 1))
             {
-                open.Enqueue(item);
-                closed[item] = closed[current] + 1;
-                if (item == end) return closed[item];
+                open.Enqueue(next);
+                closed[next] = closed[current] + 1;
+                if (next == end) return closed[next];
             }
         }
         return null;

@@ -94,7 +94,7 @@ public class Position
 
 public static class PositionExtensions
 {
-    public static bool TryGetValueAtPosition<T>(this Position self, List<List<T>> array, out T value)
+    public static bool TryLookup<T>(this Position self, List<List<T>> array, out T value)
     {
         if (self.Y >= 0 && self.Y < array.Count)
         {
@@ -108,7 +108,7 @@ public static class PositionExtensions
         return false;
     }
 
-    public static T GetValue<T>(this Position self, List<List<T>> array)
+    public static T Lookup<T>(this Position self, List<List<T>> array)
     {
         return array[(int)self.Y][(int)self.X];
     }

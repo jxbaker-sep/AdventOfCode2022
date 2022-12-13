@@ -72,6 +72,11 @@ namespace AdventOfCode2022.Utils
             return self.Aggregate((current, value) => current * value);
         }
 
+        public static int Product(this IEnumerable<int> self)
+        {
+            return self.Aggregate((current, value) => current * value);
+        }
+
         public static long ToLong(this IEnumerable<bool> self)
         {
             return self.Aggregate(0L, (current, value) => current * 2 + (value ? 1 : 0));
