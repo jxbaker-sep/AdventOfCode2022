@@ -34,11 +34,10 @@ public class Day14 : AdventOfCode<long, HashSet<Position>>
         var killplane = input.Select(p => p.Y).Max() + 1;
         foreach(var count in Enumerable.Range(0, int.MaxValue))
         {
-            if (!Sandfall(input, new Position(0, 500), killplane, false))
+            if (!Sandfall(input, new Position(0, 500), killplane))
             {
                 return count;
             }
-            // DrawIt(input);
         }
         throw new ApplicationException();
     }
@@ -49,14 +48,15 @@ public class Day14 : AdventOfCode<long, HashSet<Position>>
     public override long Part2(HashSet<Position> input)
     {
         input = input.ToHashSet();
-        var killplane = input.Select(p => p.Y).Max() + 2;
+        var floor = input.Select(p => p.Y).Max() + 2;
+        DrawLine(input, new(500 + floor * 2, floor), new(500 - floor * 2, floor));
         foreach(var count in Enumerable.Range(0, int.MaxValue))
         {
-            if (!Sandfall(input, new Position(0, 500), killplane, true))
+            if (input.Contains(new(0, 500))) return count;
+            if (!Sandfall(input, new Position(0, 500), floor + 1))
             {
-                return count;
+                throw new ApplicationException();
             }
-            // DrawIt(input);
         }
         throw new ApplicationException();
     }
@@ -74,24 +74,18 @@ public class Day14 : AdventOfCode<long, HashSet<Position>>
         result.Add(rp2);
     }
 
-    private bool Sandfall(HashSet<Position> input, Position position, long killplane, bool killplaneIsInfinite)
+    private bool Sandfall(HashSet<Position> input, Position position, long killplane)
     {
         var s = Vector.South;
         var sw = Vector.South + Vector.West;
         var se = Vector.South + Vector.East;
         if (input.Contains(position)) 
         {
-            if (killplaneIsInfinite) return false;
             throw new ApplicationException("Sand hole is blocked.");
         }
         while (position.Y < killplane)
         {
-            if (killplaneIsInfinite && position.Y == killplane - 1)
-            {
-                input.Add(position);
-                return true;
-            }
-            else if (!input.Contains(position + s))
+            if (!input.Contains(position + s))
             {
                 position += s;
             }
@@ -109,28 +103,8 @@ public class Day14 : AdventOfCode<long, HashSet<Position>>
                 return true;
             }
         }
-        if (killplaneIsInfinite) throw new ApplicationException();
         return false;
     }
-
-    private void DrawIt(HashSet<Position> input)
-    {
-        var miny = input.Select(p => p.Y).Min();
-        var maxy = input.Select(p => p.Y).Max();
-        var minx = input.Select(p => p.X).Min();
-        var maxx = input.Select(p => p.X).Max();
-        Console.WriteLine();
-        for(var y = miny; y <= maxy; y++)
-        {
-            Console.WriteLine();
-            for(var x = minx; x <= maxx; x++)
-            {
-                Console.Write(input.Contains(new(y, x)) ? '#' : '.');
-            }
-        }
-    }
-
-
 }
 
 public record Day14Line(
