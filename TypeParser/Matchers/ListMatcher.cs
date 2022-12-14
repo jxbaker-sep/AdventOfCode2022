@@ -32,7 +32,11 @@ namespace TypeParser.Matchers
             while (instance.Count < Repeat.Max)
             {
                 if (string.IsNullOrWhiteSpace(input)) break;
-                var m1 = Regex.Match(input, @$"^\s*{Repeat.Separator}\s*");
+                var separator = Repeat.Separator?.ToString();
+                if (separator?.StartsWith("^") == true) {
+                    separator = separator.Substring(1);
+                }
+                var m1 = Regex.Match(input, @$"^\s*{separator}\s*");
                 if (!m1.Success) break;
                 input = input[m1.Length..];
 

@@ -267,7 +267,7 @@ namespace AdventOfCode2022.Utils
             return (l1, l2);
         }
 
-        public static T Parse<T>(this string self) => TypeCompiler.Parse<T>(self);
+        public static T Parse<T>(this string self, Format? format = null) => TypeCompiler.Parse<T>(self, format);
 
         public static List<T> Parse<T>(this IEnumerable<string> self) => self.Select(s => s.Parse<T>()).ToList();
     
