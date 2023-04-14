@@ -24,6 +24,8 @@ namespace TypeParser
 
         public string? Before { get; init; }
 
+        public string? BeforeRx {get; init;}
+
         public Optional Optional { get; init; }
 
         [RegexPattern]
@@ -46,7 +48,7 @@ namespace TypeParser
 
     internal static class FormatExtensions
     {
-        public static InternalFormat Format(this Format format) => new(Convert(format.Before), 
+        public static InternalFormat Format(this Format format) => new(format.BeforeRx is {} ? new Regex(format.BeforeRx) : Convert(format.Before), 
             Convert(format.After), 
             format.Optional, 
             ConvertChoices(format.Choices) ?? Convert2(format.Regex), 

@@ -35,10 +35,9 @@ namespace TypeParser.Matchers
             else
             {
                 Properties = ctors.First().GetParameters()
-                    .WithIndices()
                     .Select(p =>
                     {
-                        var property = p.Value;
+                        var property = p;
                         return new InfoType(property.ParameterType, property.GetCustomAttributes().ToList());
                     })
                     .ToList();
@@ -51,7 +50,7 @@ namespace TypeParser.Matchers
             return InternalAlternativeGroups;
         }
 
-        private record InfoType(Type Type, IReadOnlyList<Attribute> Attributes, 
+        private record InfoType(Type Type, IReadOnlyList<Attribute> Attributes,
             PropertyInfo? PropertyInfo = null);
 
         private IReadOnlyList<ITypeMatcher> Compile()

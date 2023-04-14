@@ -43,7 +43,7 @@ public class Day09 : AdventOfCode<long, IReadOnlyList<Vector>>
         var visited = new HashSet<Position>{rope.Last()};
         foreach(var vector in input)
         {
-            foreach(var _ in Enumerable.Range(0, vector.Magnitude))
+            foreach(var _ in Enumerable.Range(0, (int)vector.Magnitude))
             {
                 rope = MoveRope(rope, vector.Unit);
                 visited.Add(rope.Last());

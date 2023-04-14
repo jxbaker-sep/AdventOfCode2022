@@ -10,10 +10,10 @@ namespace AdventOfCode2022.Utils
         public static readonly Vector South = new(1, 0);
         public static readonly Vector West = new(0, -1);
 
-        public int dX { get; }
-        public int dY { get; }
+        public long dX { get; }
+        public long dY { get; }
 
-        public Vector(int dy, int dx)
+        public Vector(long dy, long dx)
         {
             dX = dx;
             dY = dy;
@@ -24,7 +24,7 @@ namespace AdventOfCode2022.Utils
             return new Vector(a.dY + b.dY, a.dX + b.dX);
         }
 
-        public static Vector operator *(Vector a, int magnitude)
+        public static Vector operator *(Vector a, long magnitude)
         {
             return new Vector(a.dY * magnitude, a.dX * magnitude);
         }
@@ -32,8 +32,7 @@ namespace AdventOfCode2022.Utils
         public Vector RotateRight() => new(dX, -dY);
         public Vector RotateLeft() => new(-dX, dY);
 
-        public int Magnitude => Math.Abs(dX) + Math.Abs(dY);
-
-        public Vector Unit => new Vector(Math.Sign(dY), Math.Sign(dX));
+        public Vector Unit => new Vector(LMath.Sign(dY), LMath.Sign(dX));
+        public long Magnitude => LMath.Abs(dX) + LMath.Abs(dY);
     }
 }
