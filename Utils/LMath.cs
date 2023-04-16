@@ -20,5 +20,10 @@
         {
             return item >= first && item <= last;
         }
+
+        public static long RoundUp(long numerator, long demoninator)
+        {
+            return numerator / demoninator + (numerator % demoninator != 0 ? 1 : 0);
+        }
     }
 }

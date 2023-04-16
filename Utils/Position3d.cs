@@ -81,5 +81,15 @@ namespace AdventOfCode2022.Utils
         public Position3d RollLeft() => new Position3d(X, -Y, Z);
 
         public Position3d Rotate() => new Position3d(Y, Z, -X);
+
+        public IEnumerable<Position3d> Orthoganals()
+        {
+            yield return new Position3d(Y + 1, X, Z);
+            yield return new Position3d(Y - 1, X, Z);
+            yield return new Position3d(Y, X + 1, Z);
+            yield return new Position3d(Y, X - 1, Z);
+            yield return new Position3d(Y, X, Z + 1);
+            yield return new Position3d(Y, X, Z - 1);
+        }
     }
 }
