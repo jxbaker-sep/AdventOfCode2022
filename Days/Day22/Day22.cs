@@ -5,10 +5,10 @@ using System.Text.RegularExpressions;
 using AdventOfCode2022.Utils;
 using JetBrains.Annotations;
 
-namespace AdventOfCode2022.Days.Day21;
+namespace AdventOfCode2022.Days.Day22;
 
 [UsedImplicitly]
-public class Day21 : AdventOfCode<long, IReadOnlyList<Monkey>>
+public class Day22 : AdventOfCode<long, IReadOnlyList<Monkey>>
 {
     public override IReadOnlyList<Monkey> Parse(string input) => input.Lines().Select(
         line => {
