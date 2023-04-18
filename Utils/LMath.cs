@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode2022.Utils
+﻿using System;
+
+namespace AdventOfCode2022.Utils
 {
     public static class LMath
     {
@@ -24,6 +26,12 @@
         public static long RoundUp(long numerator, long demoninator)
         {
             return numerator / demoninator + (numerator % demoninator != 0 ? 1 : 0);
+        }
+
+        public static int MathMod(int a, int b) {
+            checked {
+                return (Math.Abs(a * b) + a) % b;
+            }
         }
     }
 }

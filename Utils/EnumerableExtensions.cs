@@ -218,6 +218,11 @@ namespace AdventOfCode2022.Utils
         public static IEnumerable<(T Value, int Index)> WithIndices<T>(this IEnumerable<T> self) =>
             self.Select((it, index) => (it, index));
 
+        public static int FindIndex<T>(this IEnumerable<T> self, Func<T, bool> selector) =>
+            self.WithIndices().First(it => selector(it.Value)).Index;
+
+        public static string Csv<T>(this IEnumerable<T> self) => self.Join(",");
+
         public static T Pop<T>(this List<T> self)
         {
             var result = self.Last();
