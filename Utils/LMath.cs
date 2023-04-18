@@ -33,5 +33,11 @@ namespace AdventOfCode2022.Utils
                 return (Math.Abs(a * b) + a) % b;
             }
         }
+
+        public static long MathMod(long a, long b) {
+            checked {
+                return (Math.Abs(a * b) + a) % b;
+            }
+        }
     }
 }
