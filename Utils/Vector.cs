@@ -29,10 +29,30 @@ namespace AdventOfCode2022.Utils
             return new Vector(a.dY * magnitude, a.dX * magnitude);
         }
 
+        public static bool operator==(Vector a, Vector b)
+        {
+            return a.dX == b.dX && a.dY == b.dY;
+        }
+
+        public static bool operator!=(Vector a, Vector b) => !(a == b);
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Vector v2 && this == v2;
+        }
+
         public Vector RotateRight() => new(dX, -dY);
         public Vector RotateLeft() => new(-dX, dY);
+        public Vector Flip() => new(-dY, -dX);
 
         public Vector Unit => new Vector(LMath.Sign(dY), LMath.Sign(dX));
         public long Magnitude => LMath.Abs(dX) + LMath.Abs(dY);
+
+        public override int GetHashCode() => HashCode.Combine(dX, dY);
+
+        public override string ToString()
+    {
+        return $"({dY},{dX})";
+    }
     }
 }
