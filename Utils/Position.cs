@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AdventOfCode2022.Utils;
 
@@ -88,6 +89,22 @@ public class Position
     {
         return OrthoganallyOrDiagonallyAdjacent(other) && !OrthoganallyAdjacent(other);
     }
+
+    public IEnumerable<Position> Orthoganals() {
+        yield return this + Vector.North;
+        yield return this + Vector.East;
+        yield return this + Vector.South;
+        yield return this + Vector.West;
+    }
+
+    public IEnumerable<Position> Diagonals() {
+        yield return this + Vector.North + Vector.East;
+        yield return this + Vector.North + Vector.West;
+        yield return this + Vector.South + Vector.East;
+        yield return this + Vector.South + Vector.West;
+    }
+
+    public IEnumerable<Position> DiagonalsAndOrthoganals() => Orthoganals().Concat(Diagonals());
 
     public Vector Unit => new Vector(Math.Sign(Y), Math.Sign(X));
 }
