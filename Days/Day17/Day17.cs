@@ -21,8 +21,8 @@ public class Day17 : AdventOfCode<long, List<char>>
         return Execute(input, 2022);
     }
 
-    // [TestCase(Input.Example, 1514285714288L)]
-    // [TestCase(Input.File, 2351)]
+    [TestCase(Input.Example, 1514285714288L)]
+    [TestCase(Input.File, 1565242165201L)]
     public override long Part2(List<char> input)
     {
         return Execute(input, 1000000000000);
@@ -42,16 +42,24 @@ public class Day17 : AdventOfCode<long, List<char>>
             new Position(0, 7),
             new Position(0, 8),
         }, 0);
-        var visited = new HashSet<(string, int, int)>();
-
-        for (var rock = 0L; rock < iterations ; rock++)
+        var visited = new Dictionary<(string, int, int), (NormalizedSpace Space, long Iteration)>();
+        var finishing = false;
+        for (var iteration = 0L; iteration < iterations ; )
         {
-            space = DropRock(input, space, rock);
-            if (!visited.Add((SpaceCode(space.Space), space.Windstep, (int)(rock % Shapes.Patterns.Count))))
+            var key = (SpaceCode(space.Space), space.Windstep, (int)(iteration % Shapes.Patterns.Count));
+            if (!finishing && !visited.TryAdd(key, (space, iteration)))
             {
-                Console.WriteLine($"\n\n*************\n{space.Floor}, {rock}, {space.Space.Select(p => -p.Y).Max()}, {space.Space.Select(p => -p.Y).Max() + space.Floor}");
-                return 0;
+                var previous = visited[key];
+                var n = (iterations - iteration) / (iteration - previous.Iteration);
+                // Console.WriteLine($"\n{n}, {space.Floor - previous.Space.Floor}, {space.Floor}, {space.Floor + (space.Floor - previous.Space.Floor) * n}, {space.Space.Select(p => -p.Y).Max()}, {iteration}, {(iteration - previous.Iteration)}, {iteration + n * (iteration - previous.Iteration)}");
+                iteration += n * (iteration - previous.Iteration);
+                
+                finishing = true;
+                space = new NormalizedSpace(space.Floor + (space.Floor - previous.Space.Floor) * n, space.Space, space.Windstep);
+                continue;
             }
+            space = DropRock(input, space, iteration);
+            iteration += 1;
         }
 
         return space.Space.Select(p => -p.Y).Max() + space.Floor;
