@@ -11,82 +11,113 @@ namespace AdventOfCode2022.Days.Day17;
 public class Day17 : AdventOfCode<long, List<char>>
 {
     public override List<char> Parse(string input) => input.Lines().Single().ToList();
-
+    private const int rightWall = 8;
+    private const int leftWall = 0;
 
     [TestCase(Input.Example, 3068)]
-    [TestCase(Input.File, 0)]
+    [TestCase(Input.File, 3144)]
     public override long Part1(List<char> input)
     {
-        var rightWall = 8;
-        var leftWall = 0;
-        var floor = 0;
-
-        var space = new HashSet<Position>();
-        var windStep = 0;
-
-        foreach (var rock in Enumerable.Range(0, 2022))
-        {
-            var pattern = Shapes.Patterns[rock % Shapes.Patterns.Count];
-
-            var topRock = -space.Select(p => p.Y).Append(floor).Min();
-
-
-            pattern = Shapes.Move(pattern, Vector.East * 3 + Vector.North * (topRock + 3 + Shapes.Height(pattern)) );
-
-            foreach(var step in Enumerable.Range(0, int.MaxValue))
-            {
-                var wind = input[(windStep++) % (input.Count)] switch {
-                    '<' => Vector.West,
-                    '>' => Vector.East,
-                    _ => throw new ApplicationException()
-                };
-
-                var newPattern = Shapes.Move(pattern, wind);
-                if (newPattern.All(p => !space.Contains(p) &&
-                    Shapes.Left(newPattern) > leftWall && 
-                    Shapes.Right(newPattern) < rightWall))
-                {
-                    pattern = newPattern;
-                }
-
-                newPattern = Shapes.Move(pattern, Vector.South);
-                if (newPattern.All(p => !space.Contains(p) && p.Y < floor))
-                {
-                    pattern = newPattern;
-                    continue;
-                }
-                foreach(var p in pattern)
-                {
-                    space.Add(p);
-                }
-                // PrintGrid(space);
-                break;
-            }
-        }
-
-        return space.Select(p => -p.Y).Max();
+        return Execute(input, 2022);
     }
 
-    private void PrintGrid(HashSet<Position> grid)
-    {
-        Console.WriteLine("........");
-        for(var y = grid.Select(p => p.Y).Min(); y <= grid.Select(p => p.Y).Max(); y++)
-        {
-            for(var x = grid.Select(p => p.X).Min(); x <= grid.Select(p => p.X).Max(); x++)
-            {
-                Console.Write(grid.Contains(new(y,x)) ? '#' : ' ');
-            }
-            Console.WriteLine();
-        }
-    }
-
-
-    [TestCase(Input.Example, 1514285714288L)]
+    // [TestCase(Input.Example, 1514285714288L)]
     // [TestCase(Input.File, 2351)]
-    public override long Part2(List<char> valves)
+    public override long Part2(List<char> input)
     {
-        return 0;
+        return Execute(input, 1000000000000);
     }
+
+    private long Execute(List<char> input, long iterations)
+    {
+        var space = new NormalizedSpace(0, new HashSet<Position> 
+        {  
+            new Position(0, 0),
+            new Position(0, 1),
+            new Position(0, 2),
+            new Position(0, 3),
+            new Position(0, 4),
+            new Position(0, 5),
+            new Position(0, 6),
+            new Position(0, 7),
+            new Position(0, 8),
+        }, 0);
+        var visited = new HashSet<(string, int, int)>();
+
+        for (var rock = 0L; rock < iterations ; rock++)
+        {
+            space = DropRock(input, space, rock);
+            if (!visited.Add((SpaceCode(space.Space), space.Windstep, (int)(rock % Shapes.Patterns.Count))))
+            {
+                Console.WriteLine($"\n\n*************\n{space.Floor}, {rock}, {space.Space.Select(p => -p.Y).Max()}, {space.Space.Select(p => -p.Y).Max() + space.Floor}");
+                return 0;
+            }
+        }
+
+        return space.Space.Select(p => -p.Y).Max() + space.Floor;
+    }
+
+    private string SpaceCode(IReadOnlySet<Position> space) => space.OrderBy(p => p.Y).ThenBy(p => p.X).Select(p => p.ToString()).Join();
+
+    private NormalizedSpace DropRock(List<char> input, NormalizedSpace normalizedSpace, long rock)
+    {
+        var pattern = Shapes.Patterns[(int)(rock % Shapes.Patterns.Count)];
+        var windstep = normalizedSpace.Windstep;
+        var space = normalizedSpace.Space.ToHashSet();
+
+        var topRock = -space.Select(p => p.Y).Min();
+
+        pattern = Shapes.Move(pattern, Vector.East * 3 + Vector.North * (topRock + 3 + Shapes.Height(pattern)));
+
+        foreach (var step in Enumerable.Range(0, int.MaxValue))
+        {
+            var wind = input[(windstep++) % (input.Count)] switch
+            {
+                '<' => Vector.West,
+                '>' => Vector.East,
+                _ => throw new ApplicationException()
+            };
+
+            var newPattern = Shapes.Move(pattern, wind);
+            if (newPattern.All(p => !space.Contains(p) &&
+                Shapes.Left(newPattern) > leftWall &&
+                Shapes.Right(newPattern) < rightWall))
+            {
+                pattern = newPattern;
+            }
+
+            newPattern = Shapes.Move(pattern, Vector.South);
+            if (newPattern.All(p => !space.Contains(p)))
+            {
+                pattern = newPattern;
+                continue;
+            }
+            foreach (var p in pattern)
+            {
+                space.Add(p);
+            }
+            // PrintGrid(space);
+            break;
+        }
+
+        return CreateNormalizedSpace(normalizedSpace.Floor, space, windstep % (input.Count));
+    }
+
+    // private void PrintGrid(HashSet<Position> grid)
+    // {
+    //     Console.WriteLine("........");
+    //     for(var y = grid.Select(p => p.Y).Min(); y <= grid.Select(p => p.Y).Max(); y++)
+    //     {
+    //         for(var x = grid.Select(p => p.X).Min(); x <= grid.Select(p => p.X).Max(); x++)
+    //         {
+    //             Console.Write(grid.Contains(new(y,x)) ? '#' : ' ');
+    //         }
+    //         Console.WriteLine();
+    //     }
+    // }
+
+
+
 
     public static class Shapes
     {
@@ -124,4 +155,37 @@ public class Day17 : AdventOfCode<long, List<char>>
             return pattern.Select(p => p.X).Max();
         }
     }
+
+    private NormalizedSpace CreateNormalizedSpace(long floor, HashSet<Position> space, int windstep)
+    {
+        var minY = space.Select(p => p.Y).Min() - 1;
+        var start = new Position(minY, leftWall + 1);
+        var open = new Queue<Position>();
+        open.Enqueue(start);
+        var closed = new HashSet<Position>();
+        var reachableBlocks = new HashSet<Position>();
+
+        while (open.TryDequeue(out var current))
+        {
+            foreach(var neighbor in current.OrthoganalNeighbors())
+            {
+                if (neighbor.X <= leftWall || neighbor.X >= rightWall) continue;
+                if (space.Contains(neighbor))
+                {
+                    reachableBlocks.Add(neighbor);
+                    continue;
+                }
+                if (neighbor.Y < minY || !closed.Add(neighbor)) continue;
+                open.Enqueue(neighbor);
+            }
+        }
+
+        var maxY = reachableBlocks.Select(p => p.Y).Max();
+        reachableBlocks = reachableBlocks.Select(p => new Position(p.Y - maxY, p.X)).ToHashSet();
+        var dy = space.Select(p => p.Y).Max() - maxY;
+
+        return new NormalizedSpace(floor + dy, reachableBlocks, windstep);
+    }
 }
+
+public record NormalizedSpace(long Floor, IReadOnlySet<Position> Space, int Windstep);

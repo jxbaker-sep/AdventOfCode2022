@@ -90,21 +90,21 @@ public class Position
         return OrthoganallyOrDiagonallyAdjacent(other) && !OrthoganallyAdjacent(other);
     }
 
-    public IEnumerable<Position> Orthoganals() {
+    public IEnumerable<Position> OrthoganalNeighbors() {
         yield return this + Vector.North;
         yield return this + Vector.East;
         yield return this + Vector.South;
         yield return this + Vector.West;
     }
 
-    public IEnumerable<Position> Diagonals() {
+    public IEnumerable<Position> DiagonalNeighbors() {
         yield return this + Vector.North + Vector.East;
         yield return this + Vector.North + Vector.West;
         yield return this + Vector.South + Vector.East;
         yield return this + Vector.South + Vector.West;
     }
 
-    public IEnumerable<Position> DiagonalsAndOrthoganals() => Orthoganals().Concat(Diagonals());
+    public IEnumerable<Position> DiagonalAndOrthoganalNeighbors() => OrthoganalNeighbors().Concat(DiagonalNeighbors());
 
     public Vector Unit => new Vector(Math.Sign(Y), Math.Sign(X));
 }

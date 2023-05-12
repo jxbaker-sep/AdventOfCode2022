@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using AdventOfCode2022.Days.Day01;
 using AdventOfCode2022.Utils;
 using TypeParser;
@@ -12,6 +13,8 @@ namespace AdventOfCode2022
         static void Main(string[] args)
         {
             var regression = args.Contains("--regression") || args.Contains("--r");
+
+            int? dayNumber = args.Count() == 1 && Regex.Match(args[0], @"\d+").Success ? Convert.ToInt32(args[0]) : null;
 
             var days = Assembly.GetExecutingAssembly()
                 .GetTypes()
@@ -25,8 +28,17 @@ namespace AdventOfCode2022
 
             if (!regression)
             {
-                days = EnumerableExtensions.ListFromItem(days.Last());
+                if (dayNumber is {})
+                {
+                    days = EnumerableExtensions.ListFromItem(days.Single(d => d.Item2!.DayNumber == dayNumber));
+                } 
+                else 
+                {
+                    days = EnumerableExtensions.ListFromItem(days.Last());
+                }
             }
+
+            
 
             foreach (var day in days)
             {

@@ -55,7 +55,7 @@ public class Day23 : AdventOfCode<long, IReadOnlySet<Position>>
         var proposed = new Dictionary<Position, List<Position>>();
         foreach(var position in positions)
         {
-            if (position.DiagonalsAndOrthoganals().All(adjacent => !positions.Contains(adjacent)))
+            if (position.DiagonalAndOrthoganalNeighbors().All(adjacent => !positions.Contains(adjacent)))
             {
                 proposed.InsertIntoList(position, position);
                 continue;
